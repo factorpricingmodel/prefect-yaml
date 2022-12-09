@@ -31,6 +31,7 @@ insipid-sphinx-theme = {version = "^0.3.6", optional = true}
 myst-parser = {version = "^0.18", optional = true}
 ruamel-yaml = "^0.17.21"
 prefect = "^2.7.1"
+click = "^8.1.3"
 
 [tool.poetry.extras]
 docs = [
