@@ -38,4 +38,3 @@ to the [documentation](https://prefect-yaml.readthedocs.io/en/latest/)
 Install this via pip (or your favourite package manager):
 
 `pip install prefect-yaml`
-
