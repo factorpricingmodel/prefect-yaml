@@ -1,6 +1,6 @@
 import pytest
 
-from prefect_yaml.config import Data, get_data_queue, load_configuration
+from prefect_yaml.config import get_data_queue, load_configuration
 
 
 @pytest.fixture
@@ -53,21 +53,21 @@ def sparse_config():
 
 
 def test_load_configuration(deep_config):
-    parsed_config = load_configuration(deep_config)
+    parsed_config, data_cache = load_configuration(deep_config)
     assert parsed_config["task"]["task_c"]["parameters"]["input"].name == "task_b"
     assert parsed_config["task"]["task_b"]["parameters"]["input"].name == "task_a"
-    assert Data.get("task_a").description["output-name"] == "task_a.pickle"
-    assert Data.get("task_b").description["output-name"] == "task_b.pickle"
-    assert Data.get("task_c").description["output-name"] == "task_c.pickle"
+    assert data_cache.get("task_a").description["output-name"] == "task_a.pickle"
+    assert data_cache.get("task_b").description["output-name"] == "task_b.pickle"
+    assert data_cache.get("task_c").description["output-name"] == "task_c.pickle"
 
 
 def test_get_data_queue_deep_config(deep_config):
-    load_configuration(deep_config)
-    data_queue = get_data_queue()
+    _, data_cache = load_configuration(deep_config)
+    data_queue = get_data_queue(data_cache)
     assert ["task_a", "task_b", "task_c"] == [d.name for d in data_queue]
 
 
 def test_get_data_queue_sparse_config(sparse_config):
-    load_configuration(sparse_config)
-    data_queue = get_data_queue()
+    _, data_cache = load_configuration(sparse_config)
+    data_queue = get_data_queue(data_cache)
     assert ["task_a", "task_b", "task_c", "task_d"] == [d.name for d in data_queue]

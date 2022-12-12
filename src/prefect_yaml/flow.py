@@ -45,7 +45,7 @@ def _output(metadata, name, value, output):
     output_format = output.get("format", "pickle")
     output_path = fsjoin(output_directory, f"{output_name}.{output_format}")
     if output_format == "pickle":
-        from pickle import dump as pickle_dump
+        from pickle import dump as pickle_dump  # nosec
 
         with open(output_path, mode="wb") as f:
             pickle_dump(value, f)
@@ -91,9 +91,9 @@ def main_flow(config_path=None, config_text=None):
         with open(config_path) as f:
             config_text = f.read()
 
-    configuration = load_configuration(config_text)
+    configuration, data_cache = load_configuration(config_text)
+    data_queue = get_data_queue(data_cache)
     metadata = configuration["metadata"]
-    data_queue = get_data_queue()
 
     data_futures = {}
     for data_obj in data_queue:
