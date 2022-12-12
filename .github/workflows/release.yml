@@ -26,7 +26,6 @@ jobs:
           REPOSITORY_PASSWORD: ${{ secrets.REPOSITORY_PASSWORD }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git checkout main
           git config --global user.email "factor.pricing.model@gmail.com"
           git config --global user.name "Factor Pricing Model"
           semantic-release publish --${{ github.event.inputs.release }}
