@@ -2,6 +2,7 @@ import pickle
 from os.path import exists
 from os.path import join as fsjoin
 from tempfile import TemporaryDirectory
+from math import sqrt
 
 import pytest
 
@@ -20,22 +21,24 @@ def config_text(output_directory):
         metadata:
             output-directory: "{output_directory}"
         task:
-            task_a:
+            task_c:
+                caller: math:sqrt
+                parameters:
+                    - !data task_b
+            task_b:
                 caller: math:fabs
                 parameters:
-                    - -5
-            task_b:
-                caller: time:sleep
+                    - !data task_a
+            task_a:
+                caller: math:ceil
                 parameters:
-                    - 1
+                    - -2.5
     """
 
 
-def test_flow_flatten(output_directory, config_text):
+def test_flow_deep(output_directory, config_text):
     main_flow(config_text=config_text)
-    task_a_path = fsjoin(output_directory, "task_a.pickle")
-    task_b_path = fsjoin(output_directory, "task_b.pickle")
-    assert exists(task_a_path)
-    assert exists(task_b_path)
-    with open(task_a_path, mode="rb") as fp:
-        assert 5.0 == pickle.load(fp)
+    task_c_path = fsjoin(output_directory, "task_c.pickle")
+    assert exists(task_c_path)
+    with open(task_c_path, mode="rb") as fp:
+        assert sqrt(2) == pickle.load(fp)
