@@ -1,0 +1,12 @@
+metadata:
+  output-directory: .output
+
+task:
+  task_a:
+    caller: math:fabs
+    parameters:
+      - -9.0
+  task_b:
+    caller: math:sqrt
+    parameters:
+      - !data task_a

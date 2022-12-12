@@ -1,5 +1,7 @@
 import click
 
+from .flow import main_flow
+
 
 @click.command()
 @click.option(
@@ -7,7 +9,8 @@ import click
     "-c",
     required=True,
 )
-def run(configuration):
+def main(configuration):
     """
     Run the prefect flow.
     """
+    main_flow(config_path=configuration)

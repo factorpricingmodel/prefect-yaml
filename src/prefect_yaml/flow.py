@@ -1,5 +1,6 @@
 import re
 from importlib import import_module
+from os import makedirs
 from os.path import exists
 from os.path import join as fsjoin
 
@@ -9,8 +10,54 @@ from prefect.task_runners import ConcurrentTaskRunner
 from .config import Data, get_data_queue, load_configuration
 
 
+@flow(task_runner=ConcurrentTaskRunner())
+def main_flow(config_path=None, config_text=None):
+    if config_text is None:
+        if config_path is None:
+            raise ValueError("Either config_path or config_text must be specified")
+        with open(config_path) as f:
+            config_text = f.read()
+
+    configuration, data_cache = load_configuration(config_text)
+    data_queue = get_data_queue(data_cache)
+    metadata = configuration["metadata"]
+
+    # Prepare the directory
+    output_directory = metadata["output-directory"]
+    makedirs(output_directory, exist_ok=True)
+
+    # Submit each task by dependency order
+    data_futures = {}
+    for data_obj in data_queue:
+        parameters = data_obj.description.get("parameters", {})
+        dependencies = _parse_dependencies(
+            data_futures=data_futures,
+            parameters=parameters,
+        )
+        if isinstance(dependencies, list):
+            future = run_task.submit(
+                name=data_obj.name,
+                description=data_obj.description,
+                metadata=metadata,
+                **{
+                    f"_{index}": dependency
+                    for index, dependency in enumerate(dependencies)
+                },
+            )
+        elif isinstance(dependencies, dict):
+            future = run_task.submit(
+                name=data_obj.name,
+                description=data_obj.description,
+                metadata=metadata,
+                **dependencies,
+            )
+        data_futures[data_obj.name] = future
+
+    return True
+
+
 @task
-def _task(name, description, metadata, **kwargs):
+def run_task(name, description, metadata, **kwargs):
     def is_args(kwargs):
         return all([re.match(r"^_\d+$", k) is not None for k in kwargs.keys()])
 
@@ -33,47 +80,6 @@ def _task(name, description, metadata, **kwargs):
         value=value,
         output=output,
     )
-
-
-@flow(task_runner=ConcurrentTaskRunner())
-def main_flow(config_path=None, config_text=None):
-    if config_text is None:
-        if config_path is None:
-            raise ValueError("Either config_path or config_text must be specified")
-        with open(config_path) as f:
-            config_text = f.read()
-
-    configuration, data_cache = load_configuration(config_text)
-    data_queue = get_data_queue(data_cache)
-    metadata = configuration["metadata"]
-
-    data_futures = {}
-    for data_obj in data_queue:
-        parameters = data_obj.description.get("parameters", {})
-        dependencies = _parse_dependencies(
-            data_futures=data_futures,
-            parameters=parameters,
-        )
-        if isinstance(dependencies, list):
-            future = _task.submit(
-                name=data_obj.name,
-                description=data_obj.description,
-                metadata=metadata,
-                **{
-                    f"_{index}": dependency
-                    for index, dependency in enumerate(dependencies)
-                },
-            )
-        elif isinstance(dependencies, dict):
-            future = _task.submit(
-                name=data_obj.name,
-                description=data_obj.description,
-                metadata=metadata,
-                **dependencies,
-            )
-        data_futures[data_obj.name] = future
-
-    return True
 
 
 def _parse_dependencies(data_futures, parameters):
