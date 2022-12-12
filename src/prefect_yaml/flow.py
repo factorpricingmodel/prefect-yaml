@@ -1,11 +1,11 @@
-from os.path import join as fsjoin
-from importlib import import_module
 import re
+from importlib import import_module
+from os.path import join as fsjoin
 
 from prefect import flow, task
 from prefect.task_runners import ConcurrentTaskRunner
 
-from .config import Data, load_configuration, get_data_queue
+from .config import Data, get_data_queue, load_configuration
 
 
 def _parse_dependencies(data_futures, parameters):
@@ -63,7 +63,7 @@ def _output(metadata, name, value, output):
 @task
 def _task(name, description, metadata, **kwargs):
     def is_args(kwargs):
-        return all([re.match("^_\d+$", k) is not None for k in kwargs.keys()])
+        return all([re.match(r"^_\d+$", k) is not None for k in kwargs.keys()])
 
     caller = description["caller"]
     module_name, function_name = caller.split(":")
@@ -88,8 +88,8 @@ def _task(name, description, metadata, **kwargs):
 def main_flow(config_path=None, config_text=None):
     if config_text is None:
         if config_path is None:
-            raise ValueError(f"Either config_path or config_text must be specified")
-        with open(config_path, mode="r") as f:
+            raise ValueError("Either config_path or config_text must be specified")
+        with open(config_path) as f:
             config_text = f.read()
 
     configuration = load_configuration(config_text)

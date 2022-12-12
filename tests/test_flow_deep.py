@@ -1,8 +1,8 @@
 import pickle
+from math import sqrt
 from os.path import exists
 from os.path import join as fsjoin
 from tempfile import TemporaryDirectory
-from math import sqrt
 
 import pytest
 
