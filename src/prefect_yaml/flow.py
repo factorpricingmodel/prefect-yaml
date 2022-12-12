@@ -69,7 +69,6 @@ def _task(name, description, metadata, **kwargs):
     module_name, function_name = caller.split(":")
     module = import_module(module_name)
     func = getattr(module, function_name)
-    print(list(kwargs.values()))
 
     if is_args(kwargs):
         value = func(*[v for v in kwargs.values()])
@@ -118,8 +117,6 @@ def main_flow(config_path=None, config_text=None):
                 metadata=metadata,
                 **dependencies,
             )
-        print("*" * 50)
-        print(data_obj.name)
         data_futures[data_obj.name] = future
 
     return True
