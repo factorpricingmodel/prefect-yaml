@@ -38,3 +38,70 @@ to the [documentation](https://prefect-yaml.readthedocs.io/en/latest/)
 Install this via pip (or your favourite package manager):
 
 `pip install prefect-yaml`
+
+## Usage
+
+Run the command line `prefect-yaml` with the specified configuration
+file.
+
+For example, the following YAML configuration is located in [examples/simple_config.yaml](examples/simple_config.yaml).
+
+```
+metadata:
+  output-directory: .output
+
+task:
+  task_a:
+    caller: math:fabs
+    parameters:
+      - -9.0
+    output:
+      format: json
+  task_b:
+    caller: math:sqrt
+    parameters:
+      - !data task_a
+```
+
+Run the following command to generate all the task outputs to the
+directory `.output` in the running directory.
+
+```shell
+prefect-yaml -c examples/simple_config.yaml
+```
+
+The output directory contains all the task outputs in the specified
+format. The default format is pickle.
+
+```shell
+% tree .output
+.output
+├── task_a.json
+└── task_b.pickle
+
+0 directories, 2 files
+```
+
+## Configuration
+
+Each configuration must specify the section of `metadata` and `task`.
+
+### Metadata
+
+Metadata section contains the following parameters.
+
+|     Parameter      |         Description         | Required / Optional |
+| :----------------: | :-------------------------: | :-----------------: |
+| `output-directory` | Filesystem output directory |      Required       |
+
+### Task
+
+Each task is a key-value pair where the key is the name of the task,
+and the value is a dictionary of parameters.
+
+|  Parameter   | Subsection |                                        Description                                        | Required / Optional |
+| :----------: | :--------: | :---------------------------------------------------------------------------------------: | :-----------------: |
+|   `caller`   |            |          Caller module and function name. In the format of `<module>:<function>`          |      Required       |
+| `parameters` |            | Function arguments. Either a list of unnamed arguments or a dictionary of named arguments |     (Optional)      |
+|   `format`   |  `output`  |   Output format. Supported stdlib formats are `pickle` and `json`. Default is `pickle`.   |     (Optional)      |
+|    `name`    |  `output`  |                Name of the output file. Default is same as the task name.                 |     (Optional)      |
