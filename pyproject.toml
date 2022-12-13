@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prefect-yaml"
-version = "2022.1.0"
+version = "2022.2.0"
 description = "Prefect scheduler for YAML configuration"
 authors = ["Factor Pricing Model <factor.pricing.model@gmail.com>"]
 license = "MIT"

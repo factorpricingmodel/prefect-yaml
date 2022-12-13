@@ -4,6 +4,17 @@ All noteable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v2022.2.0 (2022-12-13)
+### Feature
+* Allow task return cached in memory ([`3a40376`](https://github.com/factorpricingmodel/prefect-yaml/commit/3a4037655518a5fe45f8d594497b465edf940239))
+* Support customised dump and load caller ([`8273d59`](https://github.com/factorpricingmodel/prefect-yaml/commit/8273d5946148eca1e743a2fdee975099d9d0195f))
+
+### Fix
+* Iterate the parameters to update dependencies ([`2f31fb3`](https://github.com/factorpricingmodel/prefect-yaml/commit/2f31fb317c77ea99468ee46553d54460d7acaa06))
+
+### Documentation
+* Update readme ([`01ec86d`](https://github.com/factorpricingmodel/prefect-yaml/commit/01ec86d99c9d4348e4ed1137193371b7a58d3450))
+
 ## v2022.1.0 (2022-12-12)
 ### Feature
 * Support command line entry point ([`d891d38`](https://github.com/factorpricingmodel/prefect-yaml/commit/d891d383930d980f3bdffafe8494585246728160))
