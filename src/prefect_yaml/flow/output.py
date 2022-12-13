@@ -1,5 +1,6 @@
-from typing import Dict, Any
-from os.path import join as fsjoin, exists
+from os.path import exists
+from os.path import join as fsjoin
+from typing import Any, Dict
 
 
 class Output:
@@ -48,15 +49,9 @@ class Output:
         """
         output_format = self._description.get("format", "pickle")
         if output_format == "pickle":
-            from pickle import load as pickle_load  # nosec
-
-            with open(self._output_path, mode="rb") as f:
-                return pickle_load(f)
+            return Output._default_pickle_loader()
         elif output_format == "json":
-            from json import load as json_load
-
-            with open(self._output_path) as f:
-                return json_load(f)
+            return Output._default_json_loader()
         else:
             raise ValueError(f"Output format {output_format} is not supported")
 
@@ -71,15 +66,9 @@ class Output:
         """
         output_format = self._description.get("format", "pickle")
         if output_format == "pickle":
-            from pickle import dump as pickle_dump  # nosec
-
-            with open(self._output_path, mode="wb") as f:
-                pickle_dump(value, f)
+            self._default_pickle_dumper(value=value, output_path=self._output_path)
         elif output_format == "json":
-            from json import dump as json_dump
-
-            with open(self._output_path, mode="w") as f:
-                json_dump(value, f)
+            self._default_json_dumper(value=value, output_path=self._output_path)
         else:
             raise ValueError(f"Output format {output_format} is not supported")
 
@@ -89,3 +78,31 @@ class Output:
         output_name = description.get("name", name)
         output_format = description.get("format", "pickle")
         return fsjoin(output_directory, f"{output_name}.{output_format}")
+
+    @staticmethod
+    def _default_pickle_loader(output_path):
+        from pickle import load as pickle_load  # nosec
+
+        with open(output_path, mode="rb") as f:
+            return pickle_load(f)
+
+    @staticmethod
+    def _default_json_loader(output_path):
+        from json import load as json_load
+
+        with open(output_path) as f:
+            return json_load(f)
+
+    @staticmethod
+    def _default_pickle_dumper(value, output_path):
+        from pickle import dump as pickle_dump  # nosec
+
+        with open(output_path, mode="wb") as f:
+            pickle_dump(value, f)
+
+    @staticmethod
+    def _default_json_dumper(value, output_path):
+        from json import dump as json_dump
+
+        with open(output_path, mode="w") as f:
+            json_dump(value, f)
