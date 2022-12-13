@@ -4,11 +4,11 @@ Each configuration must specify the section of `metadata` and `task`. Metadata a
 
 ## Metadata
 
-Metadata section contains the following parameters.
+Metadata section contains the following parameters / sections.
 
-|     Parameter      |         Description         | Required / Optional |
-| :----------------: | :-------------------------: | :-----------------: |
-| `output-directory` | Filesystem output directory |      Required       |
+| Parameter / Section |                            Description                             |
+| :-----------------: | :----------------------------------------------------------------: |
+|      `output`       | Output section. For further details, please see the below section. |
 
 ## Task
 

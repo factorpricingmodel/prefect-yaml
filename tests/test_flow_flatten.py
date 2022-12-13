@@ -18,7 +18,8 @@ def output_directory():
 def config_text(output_directory):
     return f"""
         metadata:
-            output-directory: "{output_directory}"
+            output:
+                directory: "{output_directory}"
         task:
             task_a:
                 caller: math:fabs

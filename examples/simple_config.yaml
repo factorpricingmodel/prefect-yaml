@@ -1,5 +1,6 @@
 metadata:
-  output-directory: .output
+  output:
+    directory: .output
 
 task:
   task_a:

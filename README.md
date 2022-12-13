@@ -48,7 +48,8 @@ For example, the following YAML configuration is located in [examples/simple_con
 
 ```
 metadata:
-  output-directory: .output
+  output:
+    directory: .output
 
 task:
   task_a:

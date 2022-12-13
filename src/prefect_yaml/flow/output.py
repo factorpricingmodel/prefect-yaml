@@ -1,5 +1,6 @@
 import re
 from importlib import import_module
+from os import makedirs
 from os.path import exists
 from os.path import join as fsjoin
 from typing import Any, Dict
@@ -14,9 +15,7 @@ class Output:
     reading and writing from / to the destinated directory.
     """
 
-    def __init__(
-        self, name: str, metadata: Dict[str, Any], description: Dict[str, Any]
-    ):
+    def __init__(self, name: str, description: Dict[str, Any]):
         """
         Construct.
 
@@ -24,16 +23,12 @@ class Output:
         ----------
         name: str
           Name of the output.
-        metadata : dict
-          Metadata.
         description : dict
           Output description.
         """
         self._name = name
-        self._metadata = metadata
         self._description = description
         self._output_path = self._get_output_path(
-            metadata=metadata,
             name=name,
             description=description,
         )
@@ -43,6 +38,9 @@ class Output:
         """
         Return if the output exists.
         """
+        if not self._output_path:
+            return False
+
         return exists(self._output_path)
 
     @property
@@ -104,6 +102,14 @@ class Output:
         value: Any
           Dump the value to the output path.
         """
+        if not self._output_path:
+            return value
+
+        # Create the directory in local FS
+        output_directory = self._description["directory"]
+        makedirs(output_directory, exist_ok=True)
+
+        # Find out the dump caller and its parameters
         output_format = self._description.get("format", "pickle")
         caller = self._description.get("dump-caller")
         parameters = self._description.get("dump-parameters", {})
@@ -153,11 +159,19 @@ class Output:
                 f"with parameters {parameters}. Error: {e.message}"
             )
 
+        return value
+
     @staticmethod
-    def _get_output_path(metadata, name, description):
-        output_directory = description.get(
-            "output-directory", metadata["output-directory"]
-        )
+    def _get_output_path(name, description):
+        output_directory = description.get("directory")
+        if output_directory is not None and not isinstance(output_directory, str):
+            raise TypeError(
+                f"Output directory type {output_directory.__class__.__name__} "
+                "should be in str"
+            )
+        if not output_directory:
+            return None
+
         output_name = description.get("name", name)
         output_format = description.get("format", "pickle")
         return fsjoin(output_directory, f"{output_name}.{output_format}")

@@ -9,8 +9,7 @@ def test_output_default():
     with TemporaryDirectory() as tmpdir:
         output_obj = Output(
             name="test",
-            metadata={"output-directory": tmpdir},
-            description={},
+            description={"directory": tmpdir},
         )
 
         # Check the output path and its non-existence
@@ -23,18 +22,6 @@ def test_output_default():
 
         # Check its value after loading
         assert 1.0 == output_obj.load()
-
-
-def test_output_output_directory_override():
-    output_obj = Output(
-        name="test",
-        metadata={"output-directory": "test_dir"},
-        description={
-            "output-directory": "test2_dir",
-        },
-    )
-
-    assert output_obj.output_path == fsjoin("test2_dir", "test.pickle")
 
 
 def _custom_dump(value, output_path, **kwargs):
@@ -59,8 +46,8 @@ def test_output_custom_dump_caller():
     with TemporaryDirectory() as tmpdir:
         output_obj = Output(
             name="test",
-            metadata={"output-directory": tmpdir},
             description={
+                "directory": tmpdir,
                 "format": "json",
                 "dump-caller": "tests.test_output:_custom_dump",
                 "dump-parameters": {
@@ -96,8 +83,8 @@ def test_output_custom_load_caller():
     with TemporaryDirectory() as tmpdir:
         output_obj = Output(
             name="test",
-            metadata={"output-directory": tmpdir},
             description={
+                "directory": tmpdir,
                 "format": "json",
                 "load-caller": "tests.test_output:_custom_load",
                 "load-parameters": {

@@ -1,6 +1,5 @@
 import re
 from importlib import import_module
-from os import makedirs
 
 from prefect import flow, task
 from prefect.task_runners import ConcurrentTaskRunner
@@ -20,10 +19,6 @@ def main_flow(config_path=None, config_text=None):
     configuration, data_cache = load_configuration(config_text)
     data_queue = get_data_queue(data_cache)
     metadata = configuration["metadata"]
-
-    # Prepare the directory
-    output_directory = metadata["output-directory"]
-    makedirs(output_directory, exist_ok=True)
 
     # Submit each task by dependency order
     data_futures = {}
@@ -60,9 +55,11 @@ def run_task(name, description, metadata, **kwargs):
     def is_args(kwargs):
         return all([re.match(r"^_\d+$", k) is not None for k in kwargs.keys()])
 
-    output_obj = Output(
-        name=name, description=description.get("output", {}), metadata=metadata
-    )
+    output_description = {
+        **metadata.get("output", {}),
+        **description.get("output", {}),
+    }
+    output_obj = Output(name=name, description=output_description)
 
     # Load and return the output value if exists already
     if output_obj.exists:
@@ -80,8 +77,7 @@ def run_task(name, description, metadata, **kwargs):
         value = func(**kwargs)
 
     # Write the value to the output path
-    output_obj.dump(value)
-    return value
+    return output_obj.dump(value)
 
 
 def _parse_dependencies(data_futures, parameters):

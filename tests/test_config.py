@@ -7,7 +7,8 @@ from prefect_yaml.flow.config import get_data_queue, load_configuration
 def deep_config():
     return """
     metadata:
-        output-directory: "output"
+        output:
+            directory: "output"
     task:
       task_c:
         output-name: "task_c.pickle"
@@ -29,7 +30,8 @@ def deep_config():
 def sparse_config():
     return """
     metadata:
-        output-directory: "output"
+        output:
+            directory: "output"
     task:
       task_d:
         output-name: "task_c.pickle"
