@@ -103,5 +103,5 @@ and the value is a dictionary of parameters.
 | :----------: | :--------: | :---------------------------------------------------------------------------------------: | :-----------------: |
 |   `caller`   |            |          Caller module and function name. In the format of `<module>:<function>`          |      Required       |
 | `parameters` |            | Function arguments. Either a list of unnamed arguments or a dictionary of named arguments |     (Optional)      |
-|   `format`   |  `output`  |   Output format. Supported stdlib formats are `pickle` and `json`. Default is `pickle`.   |     (Optional)      |
 |    `name`    |  `output`  |                Name of the output file. Default is same as the task name.                 |     (Optional)      |
+|   `format`   |  `output`  |   Output format. Supported stdlib formats are `pickle` and `json`. Default is `pickle`.   |     (Optional)      |
