@@ -13,3 +13,9 @@ task:
     caller: math:sqrt
     parameters:
       - !data task_a
+    output:
+      directory: null
+  task_c:
+    caller: math:fsum
+    parameters:
+      - [!data task_b, 1]

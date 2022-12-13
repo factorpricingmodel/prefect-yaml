@@ -80,7 +80,7 @@ def run_task(name, description, metadata, **kwargs):
     return output_obj.dump(value)
 
 
-def _parse_dependencies(data_futures, parameters):
+def _parse_dependencies(data_futures, parameters, allow_primitive=False):
     if isinstance(parameters, dict):
         dependencies = {}
         for key, value in parameters.items():
@@ -91,6 +91,10 @@ def _parse_dependencies(data_futures, parameters):
                         f"Current future list = {list(data_futures.keys())}"
                     )
                 dependencies[key] = data_futures[value.name]
+            elif isinstance(value, (list, tuple, dict)):
+                dependencies[key] = _parse_dependencies(
+                    data_futures, value, allow_primitive=True
+                )
             else:
                 dependencies[key] = value
     elif isinstance(parameters, list):
@@ -103,9 +107,13 @@ def _parse_dependencies(data_futures, parameters):
                         f"Current future list = {list(data_futures.keys())}"
                     )
                 dependencies.append(data_futures[value.name])
+            elif isinstance(value, (list, tuple, dict)):
+                dependencies.append(
+                    _parse_dependencies(data_futures, value, allow_primitive=True)
+                )
             else:
                 dependencies.append(value)
-    else:
+    elif not allow_primitive:
         raise TypeError("Parameters type {parameters} is not supported")
 
     return dependencies
