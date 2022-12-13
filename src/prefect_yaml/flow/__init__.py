@@ -8,6 +8,7 @@ from prefect import flow, task
 from prefect.task_runners import ConcurrentTaskRunner
 
 from .config import Data, get_data_queue, load_configuration
+from .output import Output
 
 
 @flow(task_runner=ConcurrentTaskRunner())
@@ -61,9 +62,15 @@ def run_task(name, description, metadata, **kwargs):
     def is_args(kwargs):
         return all([re.match(r"^_\d+$", k) is not None for k in kwargs.keys()])
 
-    output = description.get("output", {})
-    if _exists_output(metadata=metadata, name=name, output=output):
-        return _load_output(metadata=metadata, name=name, output=output)
+    output_obj = Output(
+        name=name, description=description.get("output", {}), metadata=metadata
+    )
+
+    # Load and return the output value if exists already
+    if output_obj.exists:
+        return output_obj.load()
+
+    # Run the task to prepare the value
     caller = description["caller"]
     module_name, function_name = caller.split(":")
     module = import_module(module_name)
@@ -74,12 +81,9 @@ def run_task(name, description, metadata, **kwargs):
     else:
         value = func(**kwargs)
 
-    return _export_output(
-        metadata=metadata,
-        name=name,
-        value=value,
-        output=output,
-    )
+    # Write the value to the output path
+    output_obj.dump(value)
+    return value
 
 
 def _parse_dependencies(data_futures, parameters):
@@ -111,50 +115,3 @@ def _parse_dependencies(data_futures, parameters):
         raise TypeError("Parameters type {parameters} is not supported")
 
     return dependencies
-
-
-def _get_output_path(metadata, name, output):
-    output_directory = metadata["output-directory"]
-    output_name = output.get("name", name)
-    output_format = output.get("format", "pickle")
-    return fsjoin(output_directory, f"{output_name}.{output_format}")
-
-
-def _exists_output(metadata, name, output):
-    return exists(_get_output_path(metadata=metadata, name=name, output=output))
-
-
-def _load_output(metadata, name, output):
-    output_format = output.get("format", "pickle")
-    output_path = _get_output_path(metadata=metadata, name=name, output=output)
-    if output_format == "pickle":
-        from pickle import load as pickle_load  # nosec
-
-        with open(output_path, mode="rb") as f:
-            return pickle_load(f)
-    elif output_format == "json":
-        from json import load as json_load
-
-        with open(output_path) as f:
-            return json_load(f)
-    else:
-        raise ValueError(f"Output format {output_format} is not supported")
-
-
-def _export_output(metadata, name, value, output):
-    output_format = output.get("format", "pickle")
-    output_path = _get_output_path(metadata=metadata, name=name, output=output)
-    if output_format == "pickle":
-        from pickle import dump as pickle_dump  # nosec
-
-        with open(output_path, mode="wb") as f:
-            pickle_dump(value, f)
-    elif output_format == "json":
-        from json import dump as json_dump
-
-        with open(output_path, mode="w") as f:
-            json_dump(value, f)
-    else:
-        raise ValueError(f"Output format {output_format} is not supported")
-
-    return value

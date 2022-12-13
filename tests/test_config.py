@@ -1,6 +1,6 @@
 import pytest
 
-from prefect_yaml.config import get_data_queue, load_configuration
+from prefect_yaml.flow.config import get_data_queue, load_configuration
 
 
 @pytest.fixture
