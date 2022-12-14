@@ -27,7 +27,7 @@ overrides the global parameters.
 
 |     Parameter     |                                                                                                    Description                                                                                                     |
 | :---------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|    `directory`    |                                                                  Directory of the output file. Default is `null`, stored in memory without any file dump.|
+|    `directory`    |                                                              Directory of the output file. Default is `null`, stored in memory without any file dump.                                                              |
 |      `name`       |                                                                             Name of the output file. Default is same as the task name.                                                                             |
 |     `format`      |                                                               Output format. Supported stdlib formats are `pickle` and `json`. Default is `pickle`.                                                                |
 |   `load-caller`   |                                   Caller to load the output formatted in `<module>:<function>`. The function / method should accept the task return value as the first argument.                                   |

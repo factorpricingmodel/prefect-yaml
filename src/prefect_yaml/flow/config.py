@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict, Optional
 
 from ruamel.yaml import YAML
 
@@ -72,7 +72,23 @@ def update_data(data: object) -> object:
         return data
 
 
-def load_configuration(configuration):
+def format_string(configuration: Dict[str, Any], variables: Dict[str, str]) -> object:
+    if not variables:
+        return configuration
+
+    if isinstance(configuration, str):
+        return configuration.format(**variables)
+    elif isinstance(configuration, list):
+        return [format_string(item, variables) for item in configuration]
+    elif isinstance(configuration, dict):
+        return {k: format_string(v, variables) for k, v in configuration.items()}
+
+    return configuration
+
+
+def load_configuration(
+    configuration, variables: Optional[Dict[str, Any]] = None
+) -> object:
     # Load the configuration from YAML format
     global _DATA_CACHE
     try:
@@ -88,6 +104,7 @@ def load_configuration(configuration):
             Data.create(task_name)
         # Update the descriptions of all the data objects
         configuration = update_data(configuration)
+        configuration = format_string(configuration, variables)
         data_cache = _DATA_CACHE
     finally:
         _DATA_CACHE = {}

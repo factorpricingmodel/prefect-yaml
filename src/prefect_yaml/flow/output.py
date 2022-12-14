@@ -167,7 +167,8 @@ class Output:
         if output_directory is not None and not isinstance(output_directory, str):
             raise TypeError(
                 f"Output directory type {output_directory.__class__.__name__} "
-                "should be in str"
+                "should be in str. In YAML format, please always wrap around "
+                'the value with double quotes " to ensure parsing in str.'
             )
         if not output_directory:
             return None

@@ -73,3 +73,27 @@ def test_get_data_queue_sparse_config(sparse_config):
     _, data_cache = load_configuration(sparse_config)
     data_queue = get_data_queue(data_cache)
     assert ["task_a", "task_b", "task_c", "task_d"] == [d.name for d in data_queue]
+
+
+def test_load_configuration_variables():
+    configuration = """
+    metadata:
+        output:
+            directory: "{output_directory}"
+    task:
+      task_d:
+        caller: itertools:chain
+        parameters:
+          - "{param1}"
+          - "{param2}"
+    """
+    configuration, _ = load_configuration(
+        configuration=configuration,
+        variables={
+            "output_directory": ".output",
+            "param1": "ABC",
+            "param2": "DEF",
+        },
+    )
+    assert configuration["metadata"]["output"]["directory"] == ".output"
+    assert configuration["task"]["task_d"]["parameters"] == ["ABC", "DEF"]

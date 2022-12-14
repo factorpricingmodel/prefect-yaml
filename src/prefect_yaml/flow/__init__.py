@@ -9,14 +9,17 @@ from .output import Output
 
 
 @flow(task_runner=ConcurrentTaskRunner())
-def main_flow(config_path=None, config_text=None):
+def main_flow(config_path=None, config_text=None, variables=None):
+    """
+    Prefect main flow function.
+    """
     if config_text is None:
         if config_path is None:
             raise ValueError("Either config_path or config_text must be specified")
         with open(config_path) as f:
             config_text = f.read()
 
-    configuration, data_cache = load_configuration(config_text)
+    configuration, data_cache = load_configuration(config_text, variables)
     data_queue = get_data_queue(data_cache)
     metadata = configuration["metadata"]
 

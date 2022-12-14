@@ -8,9 +8,22 @@ from .flow import main_flow
     "--configuration",
     "-c",
     required=True,
+    help="Configuration file path",
 )
-def main(configuration):
+@click.option(
+    "--variable",
+    "-v",
+    "variables",
+    multiple=True,
+    help=(
+        "Variable of which its key and value are split by equal side. "
+        "For example, key=value"
+    ),
+)
+def main(configuration, variables):
     """
     Run the prefect flow.
     """
-    main_flow(config_path=configuration)
+    variables = variables or []
+    variables = dict([variable.split("=") for variable in variables])
+    main_flow(config_path=configuration, variables=variables)
