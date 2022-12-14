@@ -69,7 +69,13 @@ def run_task(name, description, metadata, **kwargs):
         return output_obj.load()
 
     # Run the task to prepare the value
-    caller = description["caller"]
+    try:
+        caller = description["caller"]
+    except KeyError:
+        raise RuntimeError(
+            f"Task {name} does not have any caller but it does not "
+            f"exist in the path {output_obj.output_path}."
+        )
     module_name, function_name = caller.split(":")
     module = import_module(module_name)
     func = getattr(module, function_name)

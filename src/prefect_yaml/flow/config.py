@@ -95,6 +95,7 @@ def load_configuration(
         yaml = YAML()
         yaml.register_class(Data)
         configuration = yaml.load(configuration)
+        configuration = format_string(configuration, variables)
         # Create the data object if it hasn't been depended
         if "metadata" not in configuration:
             raise ValueError("Key metadata not found in configuration")
@@ -104,7 +105,6 @@ def load_configuration(
             Data.create(task_name)
         # Update the descriptions of all the data objects
         configuration = update_data(configuration)
-        configuration = format_string(configuration, variables)
         data_cache = _DATA_CACHE
     finally:
         _DATA_CACHE = {}

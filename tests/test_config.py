@@ -82,6 +82,8 @@ def test_load_configuration_variables():
             directory: "{output_directory}"
     task:
       task_d:
+        output:
+          name: "{name}"
         caller: itertools:chain
         parameters:
           - "{param1}"
@@ -93,7 +95,9 @@ def test_load_configuration_variables():
             "output_directory": ".output",
             "param1": "ABC",
             "param2": "DEF",
+            "name": "task_a",
         },
     )
     assert configuration["metadata"]["output"]["directory"] == ".output"
     assert configuration["task"]["task_d"]["parameters"] == ["ABC", "DEF"]
+    assert configuration["task"]["task_d"]["output"]["name"] == "task_a"
