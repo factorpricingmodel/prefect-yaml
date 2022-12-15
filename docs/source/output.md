@@ -30,7 +30,7 @@ task:
 
 ### Format
 
-Currently, the library defines the default behavior of writting and loading
+Currently, the library defines the default behavior of writing and loading
 the pickle and JSON formats. For other formats, their loaders and dumpers should
 be customised accordingly. The file extension is determined by the format.
 

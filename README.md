@@ -107,3 +107,33 @@ overrides the global parameters.
 
 For further details, please see the [documentation](https://prefect-yaml.readthedocs.io/en/latest/configuration.html#output) for parameter definitions
 in each section.
+
+## Output
+
+The default output format is either pickle (default) or JSON, while users
+can define their own output format.
+
+For example, if you would like to use `pandas` to load and dump the parquet file
+in pyarrow engine by default, you can define the configuration like below.
+
+```
+metadata:
+  format: parquet
+  dump-caller: object.to_parquet
+  dump-parameters:
+    engine: pyarrow
+  load-caller: pandas:read_parquet
+  load-parameters:
+    engine: pyarrow
+```
+
+All the output parameters, like directory, dumper and loaders, can be overridden
+in the task level. You can also specify which tasks to export to the output
+directory, while the others to only be passed down to downstream in memory.
+
+For further details, please see the [output](https://prefect-yaml.readthedocs.io/en/latest/output.html) section in documentation.
+
+## Contributing
+
+All levels of contributions are welcomed. Please refer to the [contributing](https://prefect-yaml.readthedocs.io/en/latest/contributing.html)
+section for development and release guidelines.
