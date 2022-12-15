@@ -121,7 +121,15 @@ def get_data_queue(data_cache):
         return any([d.name == name for d in data_queue])
 
     def _add_queue(data_obj):
-        parameters = data_obj.description.get("parameters", {})
+        try:
+            parameters = data_obj.description.get("parameters", {})
+        except AttributeError:
+            raise RuntimeError(
+                "Description is not yet updated in data object "
+                f"{data_obj.name}. Likely it is undefined. Please "
+                "check your configuration to ensure the data object "
+                "is defined with caller"
+            )
         if isinstance(parameters, dict):
             parameters = parameters.values()
 

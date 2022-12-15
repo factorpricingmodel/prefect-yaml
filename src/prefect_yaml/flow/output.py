@@ -77,7 +77,13 @@ class Output:
                     "It should be formatted in <module>:<function>"
                 )
             module = import_module(module_name)
-            loader = getattr(module, function_name)
+            try:
+                loader = getattr(module, function_name)
+            except AttributeError:
+                raise RuntimeError(
+                    f"Failed to load function {function_name} from "
+                    f"module {module_name} in task {self._name}"
+                )
         else:
             raise ValueError(
                 f"Customized loader caller {caller} is unrecognized. "

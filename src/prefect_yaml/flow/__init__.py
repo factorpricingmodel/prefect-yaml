@@ -78,12 +78,25 @@ def run_task(name, description, metadata, **kwargs):
         )
     module_name, function_name = caller.split(":")
     module = import_module(module_name)
-    func = getattr(module, function_name)
 
-    if is_args(kwargs):
-        value = func(*[v for v in kwargs.values()])
-    else:
-        value = func(**kwargs)
+    try:
+        func = getattr(module, function_name)
+    except AttributeError:
+        raise RuntimeError(
+            f"Failed to load function {function_name} from module {module_name} "
+            f"in task {name}."
+        )
+
+    try:
+        if is_args(kwargs):
+            value = func(*[v for v in kwargs.values()])
+        else:
+            value = func(**kwargs)
+    except TypeError as error:
+        raise RuntimeError(
+            f"Failed to run caller {caller} with parameters {kwargs} in "
+            f"task {name}. Exception: {error}"
+        )
 
     # Write the value to the output path
     return output_obj.dump(value)
