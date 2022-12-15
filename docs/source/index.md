@@ -13,6 +13,7 @@
 installation
 usage
 configuration
+output
 ```
 
 ```{toctree}
