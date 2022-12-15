@@ -32,7 +32,7 @@ def main_flow(config_path=None, config_text=None, variables=None):
             parameters=parameters,
         )
         if isinstance(dependencies, list):
-            future = run_task.submit(
+            future = task(run_task, name=data_obj.name).submit(
                 name=data_obj.name,
                 description=data_obj.description,
                 metadata=metadata,
@@ -42,7 +42,7 @@ def main_flow(config_path=None, config_text=None, variables=None):
                 },
             )
         elif isinstance(dependencies, dict):
-            future = run_task.submit(
+            future = task(run_task, name=data_obj.name).submit(
                 name=data_obj.name,
                 description=data_obj.description,
                 metadata=metadata,
@@ -53,7 +53,6 @@ def main_flow(config_path=None, config_text=None, variables=None):
     return True
 
 
-@task
 def run_task(name, description, metadata, **kwargs):
     def is_args(kwargs):
         return all([re.match(r"^_\d+$", k) is not None for k in kwargs.keys()])
