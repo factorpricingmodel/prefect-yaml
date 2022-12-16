@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/factorpricingmodel/prefect-yaml/actions?query=workflow%3ACI">
-    <img src="https://img.shields.io/github/workflow/status/factorpricingmodel/prefect-yaml/CI/main?label=CI&logo=github&style=flat-square" alt="CI Status" >
+    <img src="https://github.com/factorpricingmodel/prefect-yaml/actions/workflows/ci.yml/badge.svg" alt="CI Status" >
   </a>
   <a href="https://prefect-yaml.readthedocs.io">
     <img src="https://img.shields.io/readthedocs/prefect-yaml.svg?logo=read-the-docs&logoColor=fff&style=flat-square" alt="Documentation Status">
