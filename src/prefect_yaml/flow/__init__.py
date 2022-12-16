@@ -8,10 +8,25 @@ from .config import Data, get_data_queue, load_configuration
 from .output import Output
 
 
-@flow(task_runner=ConcurrentTaskRunner())
-def main_flow(config_path=None, config_text=None, variables=None):
+def main_flow(
+    config_path=None,
+    config_text=None,
+    variables=None,
+    name=None,
+):
     """
-    Prefect main flow function.
+    Main flow entry point.
+    """
+    return flow(prefect_yaml_flow, task_runner=ConcurrentTaskRunner(), name=name)(
+        config_path=config_path,
+        variables=variables,
+        config_text=config_text,
+    )
+
+
+def prefect_yaml_flow(config_path=None, config_text=None, variables=None):
+    """
+    Prefect YAML flow function.
     """
     if config_text is None:
         if config_path is None:

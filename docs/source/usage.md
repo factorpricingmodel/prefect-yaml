@@ -1,5 +1,7 @@
 # Usage
 
+## Cli
+
 Run the command line `prefect-yaml` with the specified configuration
 file.
 
@@ -58,3 +60,22 @@ As the output directory in `task_b` is overridden as `null`, the output of `task
 is not specified so it is dumped in default format (pickle).
 
 For further details, please see the section [configuration](https://prefect-yaml.readthedocs.io/en/latest/configuration.html) in the documentation.
+
+## Prefect Deployment
+
+It also supports running the flow via prefect [deployment](https://docs.prefect.io/concepts/deployments/).
+
+First build the deployment configuration via command
+
+```
+prefect deployment build prefect_yaml.deployment:prefect_yaml_flow -n prefect_yaml_flow -q regular -i process
+```
+
+Then apply the prefect deployment with its deployment configuration. For example, the above command exports the configuration in default name `prefect_yaml_flow-deployment.yaml`
+
+```
+prefect deployment apply prefect_yaml_flow-deployment.yaml
+```
+
+For further information about deployment YAML, please refer to prefect official
+[page](https://docs.prefect.io/concepts/deployments/#deploymentyaml).

@@ -20,10 +20,11 @@ from .flow import main_flow
         "For example, key=value"
     ),
 )
-def main(configuration, variables):
+@click.option("--name", "-n", help=("Name of the flow"))
+def main(configuration, variables, name):
     """
     Run the prefect flow.
     """
     variables = variables or []
     variables = dict([variable.split("=") for variable in variables])
-    main_flow(config_path=configuration, variables=variables)
+    main_flow(config_path=configuration, variables=variables, name=name)
