@@ -4,6 +4,21 @@ All noteable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v2022.3.0 (2022-12-16)
+### Feature
+* Support prefect deployment ([`6e1f3f9`](https://github.com/factorpricingmodel/prefect-yaml/commit/6e1f3f97d5403fc8bb70f3fa99e16b8088619761))
+* Display the task name in prefect flow ([`8745e64`](https://github.com/factorpricingmodel/prefect-yaml/commit/8745e64e7bcc70c36044440a3671a7719943c0ef))
+* Handle errors in reading configuration more verbosely ([`794d19f`](https://github.com/factorpricingmodel/prefect-yaml/commit/794d19f35f4cc01836fe552b2af162163aad97d8))
+* Support formatting the configuration with variables ([`272e6ac`](https://github.com/factorpricingmodel/prefect-yaml/commit/272e6ac9acc64553c243e4b897a2e99e47ac16fb))
+
+### Fix
+* String format in configuration ([`bd952c8`](https://github.com/factorpricingmodel/prefect-yaml/commit/bd952c8d283b2ba6dacfff27b94178e3667634e7))
+
+### Documentation
+* Update README with output section ([`6b95cdb`](https://github.com/factorpricingmodel/prefect-yaml/commit/6b95cdb58e1b5120f8fb73198cbad50006310eb5))
+* Update output section ([`eb36d38`](https://github.com/factorpricingmodel/prefect-yaml/commit/eb36d3860d826c7d1eb1306881c84fac231f3696))
+* Polish the docs ([`8282c5f`](https://github.com/factorpricingmodel/prefect-yaml/commit/8282c5fb5307b1d229f034d5ae5ccce2fac19fd0))
+
 ## v2022.2.0 (2022-12-13)
 ### Feature
 * Allow task return cached in memory ([`3a40376`](https://github.com/factorpricingmodel/prefect-yaml/commit/3a4037655518a5fe45f8d594497b465edf940239))
