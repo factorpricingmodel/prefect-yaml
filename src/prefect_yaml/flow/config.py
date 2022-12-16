@@ -56,20 +56,14 @@ class Data:
         self._description = description
 
 
-def update_data(data: object) -> object:
+def update_data_description(data: object):
     """
     Update the cached data iteratively.
     """
     global _DATA_CACHE
-    if isinstance(data, list):
-        return [update_data(item) for item in data]
-    elif isinstance(data, dict):
-        for key, value in data.items():
-            if key in _DATA_CACHE:
-                _DATA_CACHE[key].update_description(value)
-        return {key: update_data(value) for key, value in data.items()}
-    else:
-        return data
+    tasks = data.get("task", {})
+    for name, description in tasks.items():
+        _DATA_CACHE[name].update_description(description)
 
 
 def format_string(configuration: Dict[str, Any], variables: Dict[str, str]) -> object:
@@ -103,8 +97,9 @@ def load_configuration(
             raise ValueError("Key task not found in configuration")
         for task_name in configuration["task"]:
             Data.create(task_name)
+
         # Update the descriptions of all the data objects
-        configuration = update_data(configuration)
+        update_data_description(configuration)
         data_cache = _DATA_CACHE
     finally:
         _DATA_CACHE = {}
@@ -123,12 +118,12 @@ def get_data_queue(data_cache):
     def _add_queue(data_obj):
         try:
             parameters = data_obj.description.get("parameters", {})
-        except AttributeError:
+        except AttributeError as e:
             raise RuntimeError(
                 "Description is not yet updated in data object "
                 f"{data_obj.name}. Likely it is undefined. Please "
                 "check your configuration to ensure the data object "
-                "is defined with caller"
+                f"is defined with caller. Error: {e}"
             )
         if isinstance(parameters, dict):
             parameters = parameters.values()
