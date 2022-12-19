@@ -96,7 +96,7 @@ class Output:
         except Exception as e:  # noqa
             raise ValueError(
                 f"Failed to load with format {output_format} and parameters "
-                f"{parameters} from path {self._output_path}. Error: {e.message}"
+                f"{parameters} from path {self._output_path}. Error: {e}"
             )
 
     def dump(self, value: Any):
@@ -161,7 +161,7 @@ class Output:
             dumper(value, self._output_path, **parameters)
         except Exception as e:  # noqa
             raise ValueError(
-                f"Failed to call the method {dumper_name} "
+                f"Failed to call the method {function_name} "
                 f"with parameters {parameters}. Error: {e.message}"
             )
 
