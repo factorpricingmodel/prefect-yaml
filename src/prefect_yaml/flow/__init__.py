@@ -46,23 +46,41 @@ def prefect_yaml_flow(config_path=None, config_text=None, variables=None):
             data_futures=data_futures,
             parameters=parameters,
         )
+        object = data_obj.description.get("object")
+        object_dep = (
+            {
+                "object": _parse_dependencies(
+                    data_futures=data_futures,
+                    parameters=object,
+                )
+            }
+            if isinstance(object, Data)
+            else {}
+        )
         if isinstance(dependencies, list):
-            future = task(run_task, name=data_obj.name).submit(
-                name=data_obj.name,
-                description=data_obj.description,
-                metadata=metadata,
+            dependencies = {
+                **object_dep,
                 **{
                     f"_{index}": dependency
                     for index, dependency in enumerate(dependencies)
                 },
-            )
+            }
         elif isinstance(dependencies, dict):
-            future = task(run_task, name=data_obj.name).submit(
-                name=data_obj.name,
-                description=data_obj.description,
-                metadata=metadata,
+            dependencies = {
+                **object_dep,
                 **dependencies,
+            }
+        else:
+            raise TypeError(
+                "Dependencies must be in dict or list format, but "
+                f"not {dependencies.__class__.__type__}"
             )
+        future = task(run_task, name=data_obj.name).submit(
+            name=data_obj.name,
+            description=data_obj.description,
+            metadata=metadata,
+            **dependencies,
+        )
         data_futures[data_obj.name] = future
 
     return True
@@ -90,17 +108,37 @@ def run_task(name, description, metadata, **kwargs):
             f"Task {name} does not have any caller but it does not "
             f"exist in the path {output_obj.output_path}."
         )
-    module_name, function_name = caller.split(":")
-    module = import_module(module_name)
+    if caller.startswith("object."):
+        method_name = caller[7:]
+        try:
+            object = kwargs.pop("object")
+        except KeyError:
+            raise RuntimeError(
+                "Failed to locate the object from dependencies in " f"task {name}"
+            )
+        try:
+            func = getattr(object, method_name)
+        except AttributeError:
+            raise RuntimeError(
+                f"Failed to get the method {method_name} from object "
+                f"{object.__class__.__name__} in task {name}"
+            )
+    elif caller.count(":") == 1:
+        module_name, function_name = caller.split(":")
+        module = import_module(module_name)
 
-    try:
-        func = getattr(module, function_name)
-    except AttributeError:
+        try:
+            func = getattr(module, function_name)
+        except AttributeError:
+            raise RuntimeError(
+                f"Failed to load function {function_name} from module {module_name} "
+                f"in task {name}."
+            )
+    else:
         raise RuntimeError(
-            f"Failed to load function {function_name} from module {module_name} "
-            f"in task {name}."
+            f"Incorrect caller format {caller}. It should be either "
+            "in `object.<method>` or `<module>:<function>`"
         )
-
     try:
         if is_args(kwargs):
             value = func(*[v for v in kwargs.values()])
@@ -116,40 +154,20 @@ def run_task(name, description, metadata, **kwargs):
     return output_obj.dump(value)
 
 
-def _parse_dependencies(data_futures, parameters, allow_primitive=False):
-    if isinstance(parameters, dict):
-        dependencies = {}
-        for key, value in parameters.items():
-            if isinstance(value, Data):
-                if value.name not in data_futures:
-                    raise ValueError(
-                        f"Value {value.name} should be in the data futures. "
-                        f"Current future list = {list(data_futures.keys())}"
-                    )
-                dependencies[key] = data_futures[value.name]
-            elif isinstance(value, (list, tuple, dict)):
-                dependencies[key] = _parse_dependencies(
-                    data_futures, value, allow_primitive=True
-                )
-            else:
-                dependencies[key] = value
-    elif isinstance(parameters, list):
-        dependencies = []
-        for value in parameters:
-            if isinstance(value, Data):
-                if value.name not in data_futures:
-                    raise ValueError(
-                        f"Value {value.name} should be in the data futures. "
-                        f"Current future list = {list(data_futures.keys())}"
-                    )
-                dependencies.append(data_futures[value.name])
-            elif isinstance(value, (list, tuple, dict)):
-                dependencies.append(
-                    _parse_dependencies(data_futures, value, allow_primitive=True)
-                )
-            else:
-                dependencies.append(value)
-    elif not allow_primitive:
-        raise TypeError("Parameters type {parameters} is not supported")
+def _parse_dependencies(data_futures, parameters):
+    if isinstance(parameters, Data):
+        if parameters.name not in data_futures:
+            raise ValueError(
+                f"Value {parameters.name} should be in the data futures. "
+                f"Current future list = {list(data_futures.keys())}"
+            )
+        return data_futures[parameters.name]
+    elif isinstance(parameters, dict):
+        return {
+            key: _parse_dependencies(data_futures, value)
+            for key, value in parameters.items()
+        }
+    elif isinstance(parameters, (tuple, set, list)):
+        return [_parse_dependencies(data_futures, value) for value in parameters]
 
-    return dependencies
+    return parameters

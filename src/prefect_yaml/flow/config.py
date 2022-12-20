@@ -91,10 +91,13 @@ def load_configuration(
         configuration = yaml.load(configuration)
         configuration = format_string(configuration, variables)
         # Create the data object if it hasn't been depended
-        if "metadata" not in configuration:
-            raise ValueError("Key metadata not found in configuration")
-        if "task" not in configuration:
-            raise ValueError("Key task not found in configuration")
+        for section in ["metadata", "task"]:
+            if section not in configuration:
+                raise RuntimeError(
+                    f"Section `{section}` should be specified in the configuration. "
+                    "For further details, please refer to the documentation "
+                    "https://prefect-yaml.readthedocs.io/en/latest/configuration.html"
+                )
         for task_name in configuration["task"]:
             Data.create(task_name)
 

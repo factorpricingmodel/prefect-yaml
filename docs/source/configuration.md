@@ -15,10 +15,11 @@ Metadata section contains the following parameters / sections.
 Each task is a key-value pair where the key is the name of the task,
 and the value is a dictionary of parameters.
 
-|  Parameter   | Subsection |                                        Description                                        | Required / Optional |
-| :----------: | :--------: | :---------------------------------------------------------------------------------------: | :-----------------: |
-|   `caller`   |            |          Caller module and function name. In the format of `<module>:<function>`          |      Required       |
-| `parameters` |            | Function arguments. Either a list of unnamed arguments or a dictionary of named arguments |     (Optional)      |
+|  Parameter   |                                                                             Description                                                                             | Required / Optional |
+| :----------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------: |
+|   `caller`   | Caller function or method of the specified object. The function format must be in `<module>:<function>`, while the method should be specified as `object.<method>`. |      Required       |
+|   `object`   |                                                       Object if the caller is specified as an object method.                                                        |     (Optional)      |
+| `parameters` |                                      Function arguments. Either a list of unnamed arguments or a dictionary of named arguments                                      |     (Optional)      |
 
 ## Output
 
