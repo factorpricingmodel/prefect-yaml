@@ -4,6 +4,18 @@ All noteable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v2023.0.0 (2023-01-17)
+### Feature
+* Support object method in caller ([`1b52eaf`](https://github.com/factorpricingmodel/prefect-yaml/commit/1b52eafd1b1882991fd5c310f143e330058f4555))
+
+### Fix
+* Error message in output ([`ef9c9ac`](https://github.com/factorpricingmodel/prefect-yaml/commit/ef9c9ace1ff3eca1fae7757f9f1666c0c3bd9212))
+* Update the description when the parameter name is same as the data object name ([`f7fe652`](https://github.com/factorpricingmodel/prefect-yaml/commit/f7fe6524d523d97c1fada9fa0e62db47583155d9))
+
+### Documentation
+* Fix lint ([`5a1f7fb`](https://github.com/factorpricingmodel/prefect-yaml/commit/5a1f7fb8b390fcb620c623045f5c0f090e6661e0))
+* Add roadmap ([`c37bdb3`](https://github.com/factorpricingmodel/prefect-yaml/commit/c37bdb3483cb216f8e87ece50664ffe19b621b71))
+
 ## v2022.3.0 (2022-12-16)
 ### Feature
 * Support prefect deployment ([`6e1f3f9`](https://github.com/factorpricingmodel/prefect-yaml/commit/6e1f3f97d5403fc8bb70f3fa99e16b8088619761))
