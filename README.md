@@ -133,7 +133,6 @@ directory, while the others to only be passed down to downstream in memory.
 
 For further details, please see the [output](https://prefect-yaml.readthedocs.io/en/latest/output.html) section in documentation.
 
-
 ## Roadmap
 
 Currently the project is still under development. The basic features are
