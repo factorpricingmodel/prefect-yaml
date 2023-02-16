@@ -162,7 +162,7 @@ class Output:
         except Exception as e:  # noqa
             raise ValueError(
                 f"Failed to call the method {function_name} "
-                f"with parameters {parameters}. Error: {e.message}"
+                f"with parameters {parameters}. Error: {e}"
             )
 
         return value
