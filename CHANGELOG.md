@@ -4,6 +4,10 @@ All noteable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v2023.0.1 (2023-02-24)
+### Fix
+* Return error message correctly ([`7a7d382`](https://github.com/factorpricingmodel/prefect-yaml/commit/7a7d382c75c18e0987025d41993980a0b058372c))
+
 ## v2023.0.0 (2023-01-17)
 ### Feature
 * Support object method in caller ([`1b52eaf`](https://github.com/factorpricingmodel/prefect-yaml/commit/1b52eafd1b1882991fd5c310f143e330058f4555))
